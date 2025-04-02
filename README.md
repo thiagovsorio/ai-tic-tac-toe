@@ -21,3 +21,10 @@ npm run start
 
 # TO TEST
 npm run test
+```
+## API Documentation
+While the app is running, open:
+```
+http://localhost:3033/api
+```
+Swagger UI will be available there.
