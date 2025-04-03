@@ -114,4 +114,21 @@ describe('GameService', () => {
       expect(mockDb.game.create).toHaveBeenCalled();
     });
   });
+  it('should detect a continue the game if first row empty', async () => {
+    const dto: EvaluateGameDto = {
+      board: [
+        ["", "", ""],
+        ["X", "O", "O"], 
+        ["X", "X", ""]
+      ],
+      player: 'X',
+    };
+
+
+    mockAI.getMove.mockResolvedValue([2, 2]);
+
+    const result = await service.evaluate(dto);
+
+    expect(result.winner).toBeUndefined();
+  });
 });

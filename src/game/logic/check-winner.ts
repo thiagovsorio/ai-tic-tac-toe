@@ -7,12 +7,17 @@ export function checkWinner(board: string[][]): PlayerSymbol | null | 'DRAW' {
   // Check all rows and columns
   let hasEmptyCell = false;
   for (let i = 0; i < size; i++) {
+    // ["","",""]
+    // ["x","x","o"]
+    // ["x","x","x"]
     const rowStart = board[i][0];
     const colStart = board[0][i];
 
     let rowWin = !!rowStart;
     let colWin = !!colStart;
-
+    if (!rowWin) hasEmptyCell = true
+    if (!colWin) hasEmptyCell = true
+    
     for (let j = 1; j < size && (rowWin || colWin); j++) {
       if (board[i][j] === '') hasEmptyCell = true;
       if (board[j][i] === '') hasEmptyCell = true;
@@ -30,6 +35,9 @@ export function checkWinner(board: string[][]): PlayerSymbol | null | 'DRAW' {
   const antiStart = board[0][size - 1];
   let diagWin = !!diagStart;
   let antiWin = !!antiStart;
+  
+  if (!diagWin) hasEmptyCell = true
+  if (!antiWin) hasEmptyCell = true
 
   for (let i = 1; i < size && (diagWin || antiWin); i++) {
     if (board[i][i] === '' || board[i][size - 1 - i] === '') hasEmptyCell = true;
