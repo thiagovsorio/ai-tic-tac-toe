@@ -11,6 +11,10 @@ export class EvaluateGameResultDto {
     ] })
   board: string[][];
 
-  @ApiPropertyOptional({ example: 'O', enum: ['X', 'O'], description: 'The winner of the game if there is one' })
-  winner?: 'X' | 'O';
+  @ApiPropertyOptional({
+    example: 'O',
+    enum: ['X', 'O', 'DRAW'],
+    description: 'The winner of the game, or DRAW if tied',
+  })
+  winner?: 'X' | 'O' | 'DRAW';
 }

@@ -97,5 +97,21 @@ describe('GameService', () => {
 
       await expect(service.evaluate(dto)).rejects.toThrow();
     });
+    it('should detect a draw and save it', async () => {
+      const dto: EvaluateGameDto = {
+        board: [
+          ['X', 'O', 'X'],
+          ['O', 'X', 'X'],
+          ['O', 'X', 'O'],
+        ],
+        player: 'X',
+      };
+
+      const result = await service.evaluate(dto);
+
+      expect(result.winner).toBe('DRAW');
+      expect(result.message).toContain('draw');
+      expect(mockDb.game.create).toHaveBeenCalled();
+    });
   });
 });

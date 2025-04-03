@@ -13,55 +13,75 @@ export class GameService {
     private readonly db: PrismaService,
   ){}
   async evaluate({ board, player }: EvaluateGameDto): Promise<EvaluateGameResultDto> {
-    const currentWinner = checkWinner(board);
-    if (currentWinner) {
+    const currentResult = checkWinner(board);
+  
+    if (currentResult && currentResult !== 'DRAW') {
       await this.db.game.create({
         data: {
           playerX: player,
           playerO: 'AI',
-          winner: currentWinner,
+          winner: currentResult,
           boardState: board,
         },
       });
-
+  
       return {
-        message: `${currentWinner} has already won.`,
-        winner: currentWinner,
+        message: `${currentResult} has already won.`,
+        winner: currentResult,
         board,
       };
     }
-
+  
+    if (currentResult === 'DRAW') {
+      await this.db.game.create({
+        data: {
+          playerX: player,
+          playerO: 'AI',
+          winner: 'DRAW',
+          boardState: board,
+        },
+      });
+  
+      return {
+        message: `It's a draw!`,
+        winner: 'DRAW',
+        board,
+      };
+    }
+  
     const [row, col] = await this.ai.getMove(board);
-
+  
     if (board[row][col] !== '') {
       throw new BadRequestException('AI attempted an invalid move');
     }
-
+  
     board[row][col] = 'O';
-
-    const updatedWinner = checkWinner(board);
-    if (updatedWinner) {
+  
+    const updatedResult = checkWinner(board);
+  
+    if (updatedResult) {
       await this.db.game.create({
         data: {
           playerX: player,
           playerO: 'AI',
-          winner: updatedWinner,
+          winner: updatedResult,
           boardState: board,
         },
       });
-
+  
       return {
-        message: `${updatedWinner} wins!`,
-        winner: updatedWinner,
+        message: updatedResult === 'DRAW' ? "It's a draw!" : `${updatedResult} wins!`,
+        winner: updatedResult,
         board,
       };
     }
-
+  
     return {
       message: 'Next move: player',
       board,
     };
   }
+  
 
   async findAll(): Promise<Game[]> {
     return this.db.game.findMany({
